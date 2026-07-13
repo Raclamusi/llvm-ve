@@ -157,9 +157,10 @@ Value &VPBuilder::CreateStridedStore(Value &Val, Value &Ptr,
                                      MaybeAlign AlignOpt, int64_t Stride) {
   auto &ElemPtr = GetAsElementPointer(Ptr);
   auto &VecTy = getVectorType(*ElemPtr.getType()->getPointerElementType());
+  auto &ElemPtrTy = *ElemPtr.getType();
   auto *StoreFunc = Intrinsic::getDeclaration(
       &getModule(), Intrinsic::experimental_vp_strided_store,
-      {&VecTy, Type::getInt64Ty(Builder.getContext())});
+      {&VecTy, &ElemPtrTy, Type::getInt64Ty(Builder.getContext())});
   auto *StrideConst = Builder.getInt64((uint64_t)Stride);
 
   ShortValueVec Args{&Val, &ElemPtr, StrideConst, &RequestPred(),
