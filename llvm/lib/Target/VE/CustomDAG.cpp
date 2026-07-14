@@ -1363,7 +1363,9 @@ SDValue CustomDAG::getLegalReductionOpVVP(unsigned VVPOpcode, EVT ResVT,
     // Fixup: Always Use sequential 'fmul' reduction.
     if (VVPOpcode == VEISD::VVP_REDUCE_FMUL) {
       VVPOpcode = VEISD::VVP_REDUCE_SEQ_FMUL;
-      return getNode(VVPOpcode, ResVT, {StartV, VectorV, Mask, AVL}, Flags);
+      auto FloatOne = DAG.getConstantFP(
+          1.0, DL, VectorV.getValueType().getVectorElementType());
+      return getNode(VVPOpcode, ResVT, {FloatOne, VectorV, Mask, AVL}, Flags);
     }
 
     if (!scalarizeStartParam && StartV) {
